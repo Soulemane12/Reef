@@ -62,7 +62,7 @@ public class RobotContainer {
     private final ElevatorToL4Position m_elevatorToL4Position;
 
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        autoChooser = AutoBuilder.buildAutoChooser("Blue");
         
         // Initialize the base command with common dependencies
         ElevatorPositionCommandBase.initialize(m_elevator, m_request);
