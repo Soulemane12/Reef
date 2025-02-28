@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Position;
@@ -52,6 +53,7 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter();
     private final Position m_position = new Position();
     private final Elevator m_elevator = new Elevator();
+    private final Climber m_climber = new Climber();
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
     private final double kElevatorGravityCompensation = 0.03;
@@ -123,6 +125,9 @@ public class RobotContainer {
         joysticks.a().whileTrue(m_elevatorToL2Position);
         joysticks.b().whileTrue(m_elevatorToL3Position);
         joysticks.y().whileTrue(m_elevatorToL4Position);
+
+        //Climber Control
+        joysticks.x().whileTrue(m_climber.climberControl());
 
         // Position default command
         m_position.setDefaultCommand(
