@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "BlueMiddleTaxi"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "MiddletoPickup"
+            "name": "L4Position"
           }
         }
       ]
