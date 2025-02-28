@@ -25,6 +25,7 @@ import frc.robot.commands.position.PositionJoystickCommand;
 import frc.robot.commands.elevator.ElevatorToL2Position;
 import frc.robot.commands.elevator.ElevatorToL3Position;
 import frc.robot.commands.elevator.ElevatorToL4Position;
+import frc.robot.commands.elevator.ElevatorPositionCommandBase;
 
 public class RobotContainer {
 
@@ -62,9 +63,15 @@ public class RobotContainer {
 
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        m_elevatorToL2Position = new ElevatorToL2Position(m_elevator, m_request);
-        m_elevatorToL3Position = new ElevatorToL3Position(m_elevator, m_request);
-        m_elevatorToL4Position = new ElevatorToL4Position(m_elevator, m_request);
+        
+        // Initialize the base command with common dependencies
+        ElevatorPositionCommandBase.initialize(m_elevator, m_request);
+        
+        // Create command instances
+        m_elevatorToL2Position = new ElevatorToL2Position();
+        m_elevatorToL3Position = new ElevatorToL3Position();
+        m_elevatorToL4Position = new ElevatorToL4Position();
+        
         configureBindings();
         SmartDashboard.putData("Auto Mode", autoChooser);
     }
