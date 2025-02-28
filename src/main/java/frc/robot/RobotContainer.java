@@ -20,6 +20,11 @@ import frc.robot.subsystems.Position;
 import frc.robot.subsystems.Elevator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.elevator.ElevatorJoystickCommand;
+import frc.robot.commands.position.PositionJoystickCommand;
+import frc.robot.commands.elevator.ElevatorToL2Position;
+import frc.robot.commands.elevator.ElevatorToL3Position;
+import frc.robot.commands.elevator.ElevatorToL4Position;
 
 public class RobotContainer {
 
@@ -51,8 +56,15 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
+    private final ElevatorToL2Position m_elevatorToL2Position;
+    private final ElevatorToL3Position m_elevatorToL3Position;
+    private final ElevatorToL4Position m_elevatorToL4Position;
+
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        m_elevatorToL2Position = new ElevatorToL2Position(m_elevator, m_request);
+        m_elevatorToL3Position = new ElevatorToL3Position(m_elevator, m_request);
+        m_elevatorToL4Position = new ElevatorToL4Position(m_elevator, m_request);
         configureBindings();
         SmartDashboard.putData("Auto Mode", autoChooser);
     }
@@ -88,51 +100,25 @@ public class RobotContainer {
         joysticks.rightTrigger().whileTrue(new RunCommand(() -> shooter.shoot(1.0), shooter))
                                 .onFalse(new InstantCommand(() -> shooter.shoot(0.0), shooter));
 
-        // Elevator movement with joystick control
-        m_elevator.setDefaultCommand(new RunCommand(
-            () -> {
-                double rawSpeed = joysticks.getLeftY();
-                double speed = applyDeadband(rawSpeed, 0.05);
-                
-                if (speed == 0) {
-                    m_elevator.moveElevator(kElevatorGravityCompensation);
-                } else if (speed < 0) {
-                    m_elevator.moveElevator(-speed + kElevatorGravityCompensation);
-                } else {
-                    m_elevator.moveElevator(-speed);
-                }
-            },
-            m_elevator));
+        // Elevator default command
+        m_elevator.setDefaultCommand(
+            new ElevatorJoystickCommand(m_elevator, joysticks, kElevatorGravityCompensation)
+        );
 
         // Elevator position control with buttons
-        joysticks.a().whileTrue(new RunCommand(() -> m_elevator.setPositionWithRequest(m_request.withPosition(1)), m_elevator));
-        joysticks.b().whileTrue(new RunCommand(() -> m_elevator.setPositionWithRequest(m_request.withPosition(3)), m_elevator));
-        joysticks.y().whileTrue(new RunCommand(() -> m_elevator.setPositionWithRequest(m_request.withPosition(4.5)), m_elevator));
+        joysticks.a().whileTrue(m_elevatorToL2Position);
+        joysticks.b().whileTrue(m_elevatorToL3Position);
+        joysticks.y().whileTrue(m_elevatorToL4Position);
 
-        // Shooter position control with buttons
-        m_position.setDefaultCommand(new RunCommand(
-            () -> {
-                double rawSpeed = joysticks.getRightY(); // Using right stick Y for position control
-                double speed = applyDeadband(rawSpeed, 0.05);
-                
-                if (speed == 0) {
-                    m_position.setShooterPosition(kPositionGravityCompensation);
-                } else if (speed < 0) {
-                    m_position.setShooterPosition(-speed + kPositionGravityCompensation);
-                } else {
-                    m_position.setShooterPosition(-speed);
-                }
-            },
-            m_position));
+        // Position default command
+        m_position.setDefaultCommand(
+            new PositionJoystickCommand(m_position, joysticks, kPositionGravityCompensation)
+        );
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
-    }
-
-    private double applyDeadband(double value, double deadband) {
-        return Math.abs(value) < deadband ? 0 : value;
     }
 }

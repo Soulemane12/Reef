@@ -75,7 +75,7 @@ public class Elevator extends SubsystemBase {
       if (currentPosition != 0) {
         INITIAL_OFFSET = currentPosition;
         hasInitialized = true;
-        System.out.println("Initialized elevator offset to: " + INITIAL_OFFSET);
+        // System.out.println("Initialized elevator offset to: " + INITIAL_OFFSET);
       }
     }
 
@@ -83,8 +83,8 @@ public class Elevator extends SubsystemBase {
     if (++m_printCount >= 10) {
       m_printCount = 0;
       double position = (m_motor1.getPosition().getValueAsDouble() - INITIAL_OFFSET) * -1;
-      System.out.println("Elevator Position: " + position);
-      System.out.println("Elevator Velocity: " + m_motor1.getVelocity());
+      // System.out.println("Elevator Position: " + position);
+      // System.out.println("Elevator Velocity: " + m_motor1.getVelocity());
     }
   }
 

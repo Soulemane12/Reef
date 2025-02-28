@@ -21,9 +21,9 @@ public class Position extends SubsystemBase {
         config.Feedback.SensorToMechanismRatio = 3.0; // Adjust based on gear ratio
         
         // Configure Motion Magic parameters
-        config.MotionMagic.withMotionMagicCruiseVelocity(15.0)  // Adjust for desired speed
-                          .withMotionMagicAcceleration(30.0)    // Adjust acceleration
-                          .withMotionMagicJerk(3000.0);        // Adjust jerk
+        config.MotionMagic.withMotionMagicCruiseVelocity(5.0)  // Adjust for desired speed
+                          .withMotionMagicAcceleration(10.0)    // Adjust acceleration
+                          .withMotionMagicJerk(1000.0);        // Adjust jerk
 
         // Configure PID values
         config.Slot0.kP = 20.0;  // Adjust based on tuning
