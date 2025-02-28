@@ -18,7 +18,7 @@ public class Position extends SubsystemBase {
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         // Configure feedback and gear ratio if needed
-        config.Feedback.SensorToMechanismRatio = 1.0; // Adjust based on gear ratio
+        config.Feedback.SensorToMechanismRatio = 3.0; // Adjust based on gear ratio
         
         // Configure Motion Magic parameters
         config.MotionMagic.withMotionMagicCruiseVelocity(15.0)  // Adjust for desired speed
@@ -46,6 +46,7 @@ public class Position extends SubsystemBase {
      * @param targetPosition The target position in rotations.
      */
     public void setShooterPosition(double targetPosition) {
+        m_motor.setNeutralMode(NeutralModeValue.Brake);
         m_motor.setControl(new MotionMagicVoltage(targetPosition));
     }
 

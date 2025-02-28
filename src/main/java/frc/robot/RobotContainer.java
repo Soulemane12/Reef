@@ -46,7 +46,8 @@ public class RobotContainer {
     private final Elevator m_elevator = new Elevator();
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-    private final double kGravityCompensation = 0.03;
+    private final double kElevatorGravityCompensation = 0.03;
+    private final double kPositionGravityCompensation = 0.02; // Adjust this value based on testing
 
     private final SendableChooser<Command> autoChooser;
 
@@ -94,9 +95,9 @@ public class RobotContainer {
                 double speed = applyDeadband(rawSpeed, 0.05);
                 
                 if (speed == 0) {
-                    m_elevator.moveElevator(kGravityCompensation);
+                    m_elevator.moveElevator(kElevatorGravityCompensation);
                 } else if (speed < 0) {
-                    m_elevator.moveElevator(-speed + kGravityCompensation);
+                    m_elevator.moveElevator(-speed + kElevatorGravityCompensation);
                 } else {
                     m_elevator.moveElevator(-speed);
                 }
@@ -108,11 +109,21 @@ public class RobotContainer {
         joysticks.b().whileTrue(new RunCommand(() -> m_elevator.setPositionWithRequest(m_request.withPosition(3)), m_elevator));
         joysticks.y().whileTrue(new RunCommand(() -> m_elevator.setPositionWithRequest(m_request.withPosition(4.5)), m_elevator));
 
-                // Shooter position control with buttons
-        joysticks.x().whileTrue(new RunCommand(() -> m_position.setShooterPosition(1.0), m_position));
-      //  joysticks.y().whileTrue(new RunCommand(() -> m_position.setShooterPosition(2.5), m_position));
-    //    joysticks.b().whileTrue(new RunCommand(() -> m_position.setShooterPosition(4.0), m_position));
-
+        // Shooter position control with buttons
+        m_position.setDefaultCommand(new RunCommand(
+            () -> {
+                double rawSpeed = joysticks.getRightY(); // Using right stick Y for position control
+                double speed = applyDeadband(rawSpeed, 0.05);
+                
+                if (speed == 0) {
+                    m_position.setShooterPosition(kPositionGravityCompensation);
+                } else if (speed < 0) {
+                    m_position.setShooterPosition(-speed + kPositionGravityCompensation);
+                } else {
+                    m_position.setShooterPosition(-speed);
+                }
+            },
+            m_position));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
