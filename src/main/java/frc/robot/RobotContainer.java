@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -71,6 +73,10 @@ public class RobotContainer {
         m_elevatorToL2Position = new ElevatorToL2Position();
         m_elevatorToL3Position = new ElevatorToL3Position();
         m_elevatorToL4Position = new ElevatorToL4Position();
+
+        NamedCommands.registerCommand("L2Position", m_elevatorToL2Position);
+        NamedCommands.registerCommand("L3Position", m_elevatorToL3Position);
+        NamedCommands.registerCommand("L4Position", m_elevatorToL4Position);
         
         configureBindings();
         SmartDashboard.putData("Auto Mode", autoChooser);
