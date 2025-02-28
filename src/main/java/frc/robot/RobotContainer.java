@@ -68,6 +68,7 @@ public class RobotContainer {
         
         // Initialize the base command with common dependencies
         ElevatorPositionCommandBase.initialize(m_elevator, m_request);
+        ElevatorToL4Position.initialize(shooter);
         
         // Create command instances
         m_elevatorToL2Position = new ElevatorToL2Position();

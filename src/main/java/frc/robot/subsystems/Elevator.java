@@ -16,7 +16,7 @@ public class Elevator extends SubsystemBase {
   private final TalonFX m_motor2 = new TalonFX(ElevatorConstants.kElevatorMotorID2, "ChooChooTrain");
   
   // Add Motion Magic control request
-  private int m_printCount = 0;
+  // private int m_printCount = 0;
   private double INITIAL_OFFSET = 0;
   private boolean hasInitialized = false;
 
@@ -79,13 +79,13 @@ public class Elevator extends SubsystemBase {
       }
     }
 
-    // Print position every 10 cycles
-    if (++m_printCount >= 10) {
-      m_printCount = 0;
-      double position = (m_motor1.getPosition().getValueAsDouble() - INITIAL_OFFSET) * -1;
-      // System.out.println("Elevator Position: " + position);
-      // System.out.println("Elevator Velocity: " + m_motor1.getVelocity());
-    }
+    // // Print position every 10 cycles
+    // if (++m_printCount >= 10) {
+    //   m_printCount = 0;
+    //   double position = (m_motor1.getPosition().getValueAsDouble() - INITIAL_OFFSET) * -1;
+    //   // System.out.println("Elevator Position: " + position);
+    //   // System.out.println("Elevator Velocity: " + m_motor1.getVelocity());
+    // }
   }
 
   /**
@@ -105,5 +105,13 @@ public class Elevator extends SubsystemBase {
   /** Stops the elevator. */
   public void stop() {
     moveElevator(0);
+  }
+
+  /**
+   * Gets the current position of the elevator, adjusted for initial offset
+   * @return The current position in rotations
+   */
+  public double getPosition() {
+    return (m_motor1.getPosition().getValueAsDouble() - INITIAL_OFFSET) * -1;
   }
 }
