@@ -13,6 +13,7 @@ public class Pivot extends SubsystemBase {
 
     private double INITIAL_OFFSET = 0;
     private boolean hasInitialized = false;
+    private double lastTargetPosition = 0;
 
     public Pivot() {
         TalonFXConfiguration config = new TalonFXConfiguration();
@@ -48,6 +49,22 @@ public class Pivot extends SubsystemBase {
     public void setShooterPosition(double targetPosition) {
         m_motor.setNeutralMode(NeutralModeValue.Brake);
         m_motor.setControl(new MotionMagicVoltage(targetPosition));
+        lastTargetPosition = targetPosition;
+    }
+
+    /**
+     * Holds the last known position to prevent drifting.
+     */
+    public void holdPosition() {
+        setShooterPosition(lastTargetPosition);
+    }
+
+    /**
+     * Gets the current position of the shooter pivot.
+     * @return The current position in rotations.
+     */
+    public double getCurrentPosition() {
+        return m_motor.getPosition().getValueAsDouble() - INITIAL_OFFSET;
     }
 
     @Override
@@ -63,7 +80,7 @@ public class Pivot extends SubsystemBase {
         }
 
         // Print position for debugging
-        double position = (m_motor.getPosition().getValueAsDouble() - INITIAL_OFFSET);
+        double position = getCurrentPosition();
         System.out.println("Shooter Position: " + position);
     }
 }

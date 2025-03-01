@@ -84,7 +84,7 @@ public class RobotContainer {
         m_elevatorToL4Position = new ElevatorToL4Position();
 
         // Create Pivot position command (adjust the position value as needed)
-        m_pivotToTarget = new PivotSetPositionCommand(m_Pivot, m_request, -0.4839); // Example target position
+        m_pivotToTarget = new PivotSetPositionCommand(m_Pivot, m_request, -2.066); // Example target position
 
         NamedCommands.registerCommand("PivotTarget", m_pivotToTarget);
 
@@ -145,7 +145,7 @@ public class RobotContainer {
             new PositionJoystickCommand(m_Pivot, joysticks, kPositionGravityCompensation)
         );
 
-        joysticksb.rightTrigger().whileTrue(m_pivotToTarget);
+        joysticksb.rightTrigger().onTrue(m_pivotToTarget);
 
 
         drivetrain.registerTelemetry(logger::telemeterize);
