@@ -16,7 +16,7 @@ public class Elevator extends SubsystemBase {
   private final TalonFX m_motor2 = new TalonFX(ElevatorConstants.kElevatorMotorID2, "ChooChooTrain");
   
   // Add Motion Magic control request
-  // private int m_printCount = 0;
+private int m_printCount = 0;
   private double INITIAL_OFFSET = 0;
   private boolean hasInitialized = false;
 
@@ -27,7 +27,7 @@ public class Elevator extends SubsystemBase {
     // Configure feedback and gear ratio if needed
     config.Feedback.SensorToMechanismRatio = 9.0; // Adjust based on your gear ratio
     
-    // Configure Motion Magic parameters
+    // Configure Motion Magic m_printCount 
     config.MotionMagic.withMotionMagicCruiseVelocity(10.0)  // Reduced from 20.0
                       .withMotionMagicAcceleration(20.0)    // Reduced from 40.0
                       .withMotionMagicJerk(2000.0);         // Reduced from 4000.0
@@ -80,12 +80,14 @@ public class Elevator extends SubsystemBase {
     }
 
     // // Print position every 10 cycles
-    // if (++m_printCount >= 10) {
-    //   m_printCount = 0;
-    //   double position = (m_motor1.getPosition().getValueAsDouble() - INITIAL_OFFSET) * -1;
-    //   // System.out.println("Elevator Position: " + position);
-    //   // System.out.println("Elevator Velocity: " + m_motor1.getVelocity());
-    // }
+    if (++m_printCount >= 10) {
+        m_printCount = 0;
+        double position = (m_motor1.getPosition().getValueAsDouble() - INITIAL_OFFSET) * -1;
+        double velocity = m_motor1.getVelocity().getValueAsDouble();
+
+        System.out.println("Elevator Position: " + position);
+        System.out.println("Elevator Velocity: " + velocity);
+    }
   }
 
   /**

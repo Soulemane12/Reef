@@ -19,11 +19,12 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Position;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Elevator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.elevator.ElevatorJoystickCommand;
+import frc.robot.commands.position.PivotSetPositionCommand;
 import frc.robot.commands.position.PositionJoystickCommand;
 import frc.robot.commands.elevator.ElevatorToL2Position;
 import frc.robot.commands.elevator.ElevatorToL3Position;
@@ -51,7 +52,7 @@ public class RobotContainer {
     
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Shooter shooter = new Shooter();
-    private final Position m_position = new Position();
+    private final Pivot m_Pivot = new Pivot();
     private final Elevator m_elevator = new Elevator();
     private final Climber m_climber = new Climber();
 
@@ -65,6 +66,9 @@ public class RobotContainer {
     private final ElevatorToL3Position m_elevatorToL3Position;
     private final ElevatorToL4Position m_elevatorToL4Position;
 
+    private final PivotSetPositionCommand m_pivotToTarget;
+
+
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser("Blue");
         
@@ -76,6 +80,11 @@ public class RobotContainer {
         m_elevatorToL2Position = new ElevatorToL2Position();
         m_elevatorToL3Position = new ElevatorToL3Position();
         m_elevatorToL4Position = new ElevatorToL4Position();
+
+        // Create Pivot position command (adjust the position value as needed)
+        m_pivotToTarget = new PivotSetPositionCommand(m_Pivot, m_request, 2.5); // Example target position
+
+        NamedCommands.registerCommand("PivotTarget", m_pivotToTarget);
 
         NamedCommands.registerCommand("L2Position", m_elevatorToL2Position);
         NamedCommands.registerCommand("L3Position", m_elevatorToL3Position);
@@ -130,9 +139,12 @@ public class RobotContainer {
         joysticks.x().whileTrue(m_climber.climberControl());
 
         // Position default command
-        m_position.setDefaultCommand(
-            new PositionJoystickCommand(m_position, joysticks, kPositionGravityCompensation)
+        m_Pivot.setDefaultCommand(
+            new PositionJoystickCommand(m_Pivot, joysticks, kPositionGravityCompensation)
         );
+
+        joysticks.rightTrigger().whileTrue(m_pivotToTarget);
+
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

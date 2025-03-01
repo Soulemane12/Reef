@@ -8,13 +8,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
-public class Position extends SubsystemBase {
+public class Pivot extends SubsystemBase {
     private final TalonFX m_motor = new TalonFX(ShooterConstants.kShooterMotorID, "ChooChooTrain");
 
     private double INITIAL_OFFSET = 0;
     private boolean hasInitialized = false;
 
-    public Position() {
+    public Pivot() {
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         // Configure feedback and gear ratio if needed
