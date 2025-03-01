@@ -153,8 +153,8 @@ public class RobotContainer {
         joysticksb.leftTrigger().onTrue(m_pivotTo0);
 
         //Shooter Control
-        joysticksb.leftBumper().onTrue(shooter.shooterIntakeControl());
-        joysticksb.rightBumper().onTrue(shooter.shooterOutakeControl());
+        joysticksb.leftBumper().onTrue(shooter.shooterIntakeControl().withTimeout(1.5));
+        joysticksb.rightBumper().whileTrue(shooter.shooterOutakeControl().withTimeout(1.5));
 
 
         drivetrain.registerTelemetry(logger::telemeterize);
