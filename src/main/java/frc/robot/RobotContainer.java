@@ -60,7 +60,7 @@ public class RobotContainer {
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
     private final double kElevatorGravityCompensation = 0.03;
-    private final double kPositionGravityCompensation = -0.30; // Adjust this value based on testing
+    private final double kPositionGravityCompensation = -0.40; // Adjust this value based on testing
 
     private final SendableChooser<Command> autoChooser;
 
@@ -154,7 +154,7 @@ public class RobotContainer {
 
         //Shooter Control
         joysticksb.leftBumper().onTrue(shooter.shooterIntakeControl().withTimeout(1.5));
-        joysticksb.rightBumper().whileTrue(shooter.shooterOutakeControl().withTimeout(1.5));
+        joysticksb.rightBumper().whileTrue(shooter.shooterOutakeControl());
 
 
         drivetrain.registerTelemetry(logger::telemeterize);
