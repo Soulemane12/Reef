@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   // Instantiate the motor on PWM/Can ID 10 (adjust if needed) as brushless.
-  private final TalonFX m_shooterMotor =new TalonFX(30, "ChooChooTrain");
+  private final TalonFX m_shooterMotor =new TalonFX(50, "ChooChooTrain");
   private final DutyCycleOut m_shooterDutyCycleOut = new DutyCycleOut(0.5);
   private final DutyCycleOut m_shooterOutakeCycle = new DutyCycleOut(-0.5);
   private final DutyCycleOut zeroShooter = new DutyCycleOut(0);

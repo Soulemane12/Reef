@@ -60,7 +60,7 @@ public class RobotContainer {
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
     private final double kElevatorGravityCompensation = 0.03;
-    private final double kPositionGravityCompensation = -0.20; // Adjust this value based on testing
+    private final double kPositionGravityCompensation = -0.30; // Adjust this value based on testing
 
     private final SendableChooser<Command> autoChooser;
 
@@ -68,7 +68,9 @@ public class RobotContainer {
     private final ElevatorToL3Position m_elevatorToL3Position;
     private final ElevatorToL4Position m_elevatorToL4Position;
 
-    private final PivotSetPositionCommand m_pivotToTarget;
+    private final PivotSetPositionCommand m_pivotToL2L3;
+    private final PivotSetPositionCommand m_pivotTo0;
+
 
 
     public RobotContainer() {
@@ -84,9 +86,11 @@ public class RobotContainer {
         m_elevatorToL4Position = new ElevatorToL4Position();
 
         // Create Pivot position command (adjust the position value as needed)
-        m_pivotToTarget = new PivotSetPositionCommand(m_Pivot, m_request, -2.066); // Example target position
+        m_pivotToL2L3 = new PivotSetPositionCommand(m_Pivot, m_request, -2.066);
+        m_pivotTo0 = new PivotSetPositionCommand(m_Pivot, m_request, 0); // Example target position
+        // Example target position
 
-        NamedCommands.registerCommand("PivotTarget", m_pivotToTarget);
+        NamedCommands.registerCommand("PivotTarget", m_pivotToL2L3);
 
         NamedCommands.registerCommand("L2Position", m_elevatorToL2Position);
         NamedCommands.registerCommand("L3Position", m_elevatorToL3Position);
@@ -145,7 +149,9 @@ public class RobotContainer {
             new PositionJoystickCommand(m_Pivot, joysticks, kPositionGravityCompensation)
         );
 
-        joysticksb.rightTrigger().onTrue(m_pivotToTarget);
+        joysticksb.rightTrigger().onTrue(m_pivotToL2L3);
+        joysticksb.leftTrigger().onTrue(m_pivotTo0);
+
         //Shooter Control
         joysticksb.leftBumper().onTrue(shooter.shooterIntakeControl());
         joysticksb.rightBumper().onTrue(shooter.shooterOutakeControl());
