@@ -59,8 +59,8 @@ public class RobotContainer {
     private final Climber m_climber = new Climber();
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-    private final double kElevatorGravityCompensation = 0.03;
-    private final double kPositionGravityCompensation = -0.40; // Adjust this value based on testing
+    private final double kElevatorGravityCompensation = 0.05;
+    private final double kPositionGravityCompensation = -0.30; // Adjust this value based on testing
 
     private final SendableChooser<Command> autoChooser;
 
@@ -86,7 +86,7 @@ public class RobotContainer {
         m_elevatorToL4Position = new ElevatorToL4Position();
 
         // Create Pivot position command (adjust the position value as needed)
-        m_pivotToL2L3 = new PivotSetPositionCommand(m_Pivot, m_request, -2.066);
+        m_pivotToL2L3 = new PivotSetPositionCommand(m_Pivot, m_request, -2.5);
         m_pivotTo0 = new PivotSetPositionCommand(m_Pivot, m_request, 0); // Example target position
         // Example target position
 
@@ -98,6 +98,14 @@ public class RobotContainer {
         
         configureBindings();
         SmartDashboard.putData("Auto Mode", autoChooser);
+    }
+
+    private double calculateGravityCompensation(double pivotSetpoint) {
+        double minCompensation = -0.30; 
+        double maxCompensation = 0.05; 
+        double scaleFactor = 0.1; 
+    
+        return minCompensation + (scaleFactor * pivotSetpoint);
     }
 
     private void configureBindings() {
@@ -137,9 +145,9 @@ public class RobotContainer {
         );
 
         // Elevator position control with buttons
-        joysticks.a().whileTrue(m_elevatorToL2Position);
-        joysticks.b().whileTrue(m_elevatorToL3Position);
-        joysticks.y().whileTrue(m_elevatorToL4Position);
+        joysticksb.a().whileTrue(m_elevatorToL2Position);
+        joysticksb.b().whileTrue(m_elevatorToL3Position);
+        joysticksb.y().whileTrue(m_elevatorToL4Position);
 
         //Climber Control
         joysticks.x().whileTrue(m_climber.climberControl());
@@ -154,7 +162,7 @@ public class RobotContainer {
 
         //Shooter Control
         joysticksb.leftBumper().whileTrue(shooter.shooterIntakeControl());
-        joysticksb.rightBumper().onTrue(shooter.shooterOutakeControl().withTimeout(1.5));
+        joysticksb.rightBumper().onTrue(shooter.shooterOutakeControl().withTimeout(0.75));
 
 
         drivetrain.registerTelemetry(logger::telemeterize);
