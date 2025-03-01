@@ -70,6 +70,8 @@ public class RobotContainer {
 
     private final PivotSetPositionCommand m_pivotToL2L3;
     private final PivotSetPositionCommand m_pivotTo0;
+    private final PivotSetPositionCommand m_pivotToL4;
+
 
 
 
@@ -85,10 +87,22 @@ public class RobotContainer {
         m_elevatorToL3Position = new ElevatorToL3Position();
         m_elevatorToL4Position = new ElevatorToL4Position();
 
-        // Create Pivot position command (adjust the position value as needed)
-        m_pivotToL2L3 = new PivotSetPositionCommand(m_Pivot, m_request, -2.5);
-        m_pivotTo0 = new PivotSetPositionCommand(m_Pivot, m_request, 0); // Example target position
-        // Example target position
+            // Define your base setpoints (in radians)
+        double L2L3 = -2.5; 
+        double L0 = 0;
+        double L4 = -1;
+
+        // Compute the adjusted setpoints by adding gravity compensation.
+        // kPositionGravityCompensation is assumed to be a constant like -0.30 (adjust as needed).
+        double adjustedL2L3 = L2L3 + (kPositionGravityCompensation * Math.sin(L2L3));
+        double adjustedL0   = L0   + (kPositionGravityCompensation * Math.sin(L0));   // sin(0)==0 so remains 0
+        double adjustedL4   = L4   + (kPositionGravityCompensation * Math.sin(L4));
+
+        // Now create your pivot commands with the adjusted setpoints
+        m_pivotToL2L3 = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL2L3);
+        m_pivotTo0   = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL0);
+        m_pivotToL4   = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL4);
+
 
         NamedCommands.registerCommand("PivotTarget", m_pivotToL2L3);
 
@@ -159,6 +173,10 @@ public class RobotContainer {
 
         joysticksb.rightTrigger().onTrue(m_pivotToL2L3);
         joysticksb.leftTrigger().onTrue(m_pivotTo0);
+        
+        joysticksb.leftTrigger().onTrue(m_pivotToL4);
+
+        
 
         //Shooter Control
         joysticksb.leftBumper().whileTrue(shooter.shooterIntakeControl());
