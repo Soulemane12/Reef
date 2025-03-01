@@ -100,13 +100,6 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Mode", autoChooser);
     }
 
-    private double calculateGravityCompensation(double pivotSetpoint) {
-        double minCompensation = -0.30; 
-        double maxCompensation = 0.05; 
-        double scaleFactor = 0.1; 
-    
-        return minCompensation + (scaleFactor * pivotSetpoint);
-    }
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(
