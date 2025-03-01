@@ -49,6 +49,8 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
     private final CommandXboxController joystick = new CommandXboxController(0);
     private final CommandXboxController joysticks = new CommandXboxController(1);
+    private final CommandXboxController joysticksb = new CommandXboxController(2);
+
     
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Shooter shooter = new Shooter();
@@ -143,7 +145,7 @@ public class RobotContainer {
             new PositionJoystickCommand(m_Pivot, joysticks, kPositionGravityCompensation)
         );
 
-        joysticks.rightTrigger().whileTrue(m_pivotToTarget);
+        joysticksb.rightTrigger().whileTrue(m_pivotToTarget);
 
 
         drivetrain.registerTelemetry(logger::telemeterize);
