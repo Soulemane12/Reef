@@ -5,6 +5,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
@@ -82,5 +84,7 @@ public class Pivot extends SubsystemBase {
         // Print position for debugging
         double position = getCurrentPosition();
         System.out.println("Shooter Position: " + position);
+
+        SmartDashboard.putNumber("Pivot Position", m_motor.getPosition().getValueAsDouble());
     }
 }
