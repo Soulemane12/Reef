@@ -82,7 +82,7 @@ public class RobotContainer {
         m_elevatorToL4Position = new ElevatorToL4Position();
 
         // Create Pivot position command (adjust the position value as needed)
-        m_pivotToTarget = new PivotSetPositionCommand(m_Pivot, m_request, 2.5); // Example target position
+        m_pivotToTarget = new PivotSetPositionCommand(m_Pivot, m_request, -0.4839); // Example target position
 
         NamedCommands.registerCommand("PivotTarget", m_pivotToTarget);
 
