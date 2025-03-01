@@ -60,7 +60,7 @@ public class RobotContainer {
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
     private final double kElevatorGravityCompensation = 0.03;
-    private final double kPositionGravityCompensation = 0.02; // Adjust this value based on testing
+    private final double kPositionGravityCompensation = 0.001; // Adjust this value based on testing
 
     private final SendableChooser<Command> autoChooser;
 
