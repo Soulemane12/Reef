@@ -25,7 +25,7 @@ private int m_printCount = 0;
     TalonFXConfiguration config = new TalonFXConfiguration();
     
     // Configure feedback and gear ratio if needed
-    config.Feedback.SensorToMechanismRatio = 9.0; // Adjust based on your gear ratio
+    config.Feedback.SensorToMechanismRatio = 25.0; // Adjust based on your gear ratio
     
     // Configure Motion Magic m_printCount 
     config.MotionMagic.withMotionMagicCruiseVelocity(10.0)  // Reduced from 20.0
@@ -33,9 +33,9 @@ private int m_printCount = 0;
                       .withMotionMagicJerk(2000.0);         // Reduced from 4000.0
     
     // Configure PID values
-    config.Slot0.kP = 30.0;  // Reduced from 60.0
+    config.Slot0.kP = 21.6;  // Reduced from 60.0
     config.Slot0.kI = 0.0;   
-    config.Slot0.kD = 0.1;   // Reduced from 0.5
+    config.Slot0.kD = 0.18;   // Reduced from 0.5
     config.Slot0.kS = 0.25;  
     config.Slot0.kV = 1.1;   
     config.Slot0.kA = 0.05;  

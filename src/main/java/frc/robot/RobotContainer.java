@@ -29,18 +29,19 @@ import frc.robot.commands.position.PositionJoystickCommand;
 import frc.robot.commands.elevator.ElevatorToL2Position;
 import frc.robot.commands.elevator.ElevatorToL3Position;
 import frc.robot.commands.elevator.ElevatorToL4Position;
+import frc.robot.commands.elevator.ElevatorTo0Position;
+
 import frc.robot.commands.elevator.ElevatorPositionCommandBase;
 
 public class RobotContainer {
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // max angular velocity
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    /* Swerve drive platform setup */
+    /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1)
-            .withRotationalDeadband(MaxAngularRate * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
@@ -59,7 +60,7 @@ public class RobotContainer {
     private final Climber m_climber = new Climber();
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-    private final double kElevatorGravityCompensation = 0.05;
+    private final double kElevatorGravityCompensation = 0.04;
     private final double kPositionGravityCompensation = -0.30; // Adjust this value based on testing
 
     private final SendableChooser<Command> autoChooser;
@@ -67,6 +68,8 @@ public class RobotContainer {
     private final ElevatorToL2Position m_elevatorToL2Position;
     private final ElevatorToL3Position m_elevatorToL3Position;
     private final ElevatorToL4Position m_elevatorToL4Position;
+    private final ElevatorTo0Position m_elevatorTo0Position;
+
 
     private final PivotSetPositionCommand m_pivotToL2L3;
     private final PivotSetPositionCommand m_pivotTo0;
@@ -86,9 +89,10 @@ public class RobotContainer {
         m_elevatorToL2Position = new ElevatorToL2Position();
         m_elevatorToL3Position = new ElevatorToL3Position();
         m_elevatorToL4Position = new ElevatorToL4Position();
+        m_elevatorTo0Position = new ElevatorTo0Position();
 
             // Define your base setpoints (in radians)
-        double L2L3 = -2.5; 
+        double L2L3 = -3; 
         double L0 = 0;
         double L4 = -1;
 
@@ -117,10 +121,11 @@ public class RobotContainer {
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(
+            // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
-                     .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -130,17 +135,20 @@ public class RobotContainer {
         ));
 
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0.5).withVelocityY(0)
-        ));
+            forwardStraight.withVelocityX(0.5).withVelocityY(0))
+        );
         joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(-0.5).withVelocityY(0)
-        ));
+            forwardStraight.withVelocityX(-0.5).withVelocityY(0))
+        );
 
+        // Run SysId routines when holding back/start and X/Y.
+        // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
+        // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         joysticks.rightTrigger().whileTrue(new RunCommand(() -> shooter.shoot(1.0), shooter))
@@ -152,12 +160,12 @@ public class RobotContainer {
         );
 
         // Elevator position control with buttons
-        joysticksb.a().whileTrue(m_elevatorToL2Position);
-        joysticksb.b().whileTrue(m_elevatorToL3Position);
-        joysticksb.y().whileTrue(m_elevatorToL4Position);
+        joysticksb.a().onTrue(m_elevatorToL2Position);
+        joysticksb.b().onTrue(m_elevatorToL3Position);
+        joysticksb.y().onTrue(m_elevatorToL4Position);
 
         //Climber Control
-        joysticks.x().whileTrue(m_climber.climberControl());
+        joysticksb.x().onTrue(m_elevatorTo0Position);
 
         // Position default command
         m_Pivot.setDefaultCommand(
