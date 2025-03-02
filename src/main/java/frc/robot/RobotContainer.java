@@ -168,7 +168,7 @@ public class RobotContainer {
         operator.pov(180).onTrue(m_elevatorToPoint0Position);
 
         //Climber Control
-        operator.x().onTrue(m_elevatorTo0Position);
+        //operator.x().onTrue(m_elevatorTo0Position);
 
         // Position default command
         m_Pivot.setDefaultCommand(
@@ -178,14 +178,14 @@ public class RobotContainer {
         operator.rightTrigger().onTrue(m_pivotToL2L3);
         operator.leftTrigger().onTrue(m_pivotTo0);
         
-        operator.leftTrigger().onTrue(m_pivotToL4);
+       // operator.leftTrigger().onTrue(m_pivotToL4);
         
         //NEW METHODS FOR TESTING
-        operator.x().onTrue(m_pivotTo0.andThen(m_elevatorTo0Position));
+        //operator.pov(180).onTrue(m_pivotTo0.andThen(m_elevatorTo0Position));
         //operator.a().onTrue(m_pivotToL2L3.andThen(m_elevatorToL2Position));
         //operator.b().onTrue(m_pivotToL2L3.andThen(m_elevatorToL3Position));
         //operator.y().onTrue(m_pivotToL4.andThen(m_elevatorToL4Position));
-    
+
 
         //Shooter Control
         operator.leftBumper().whileTrue(shooter.shooterIntakeControl());
