@@ -72,10 +72,13 @@ public class RobotContainer {
     private final ElevatorToPoint0Position m_elevatorToPoint0Position;
 
 
-    private final PivotSetPositionCommand m_pivotToL2L3;
+    private final PivotSetPositionCommand m_pivotToL2;
+    private final PivotSetPositionCommand m_pivotToL3;
+
     private final PivotSetPositionCommand m_pivotTo0;
     private final PivotSetPositionCommand m_pivotToL4;
     private final PivotSetPositionCommand m_pivotToParallel;
+    private final PivotSetPositionCommand m_pivotToIN;
 
 
 
@@ -95,26 +98,39 @@ public class RobotContainer {
         m_elevatorToPoint0Position = new ElevatorToPoint0Position();
 
             // Define your base setpoints (in radians)
-        double L2L3 = -3; 
+        double L2 = -1.83;
+        double L3 = -1.4; 
+        double in = -1.275; 
+
+
         double L0 = 0;
-        double L4 = -1;
-        double PARALLEL = 0; // Parallel to ground is 0 radians
+        double L4 = 0.19;
+        double PARALLEL = -2.5; // Parallel to ground is 0 radians
 
         // Compute the adjusted setpoints by adding gravity compensation.
         // kPositionGravityCompensation is assumed to be a constant like -0.30 (adjust as needed).
-        double adjustedL2L3 = L2L3 + (kPositionGravityCompensation * Math.sin(L2L3));
+        double adjustedL2 = L2 + (kPositionGravityCompensation * Math.sin(L2));
+        double adjustedL3 = L3 + (kPositionGravityCompensation * Math.sin(L3));
+
         double adjustedL0   = L0   + (kPositionGravityCompensation * Math.sin(L0));   // sin(0)==0 so remains 0
         double adjustedL4   = L4   + (kPositionGravityCompensation * Math.sin(L4));
         double adjustedParallel = PARALLEL + (kPositionGravityCompensation * Math.sin(PARALLEL));
+        double adjustedin = L3 + (kPositionGravityCompensation * Math.sin(in));
+
 
         // Now create your pivot commands with the adjusted setpoints
-        m_pivotToL2L3 = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL2L3);
+        m_pivotToL2 = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL2);
+        m_pivotToL3 = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL3);
+
         m_pivotTo0   = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL0);
         m_pivotToL4   = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL4);
         m_pivotToParallel = new PivotSetPositionCommand(m_Pivot, m_request, adjustedParallel);
+     
+        m_pivotToIN = new PivotSetPositionCommand(m_Pivot, m_request, adjustedin);
 
 
-        NamedCommands.registerCommand("PivotTarget", m_pivotToL2L3);
+
+        NamedCommands.registerCommand("PivotTarget", m_pivotToL2);
 
         NamedCommands.registerCommand("L2Position", m_elevatorToL2Position);
         NamedCommands.registerCommand("L3Position", m_elevatorToL3Position);
@@ -166,10 +182,10 @@ public class RobotContainer {
         );
 
         // Elevator position control with buttons
-        operator.a().onTrue(m_elevatorToL2Position);
-        operator.b().onTrue(m_elevatorToL3Position);
-        operator.y().onTrue(m_elevatorToL4Position);
-        operator.pov(180).onTrue(m_elevatorToPoint0Position);
+      //  operator.a().onTrue(m_elevatorToL2Position);
+      //  operator.b().onTrue(m_elevatorToL3Position);
+     //   operator.y().onTrue(m_elevatorToL4Position);
+     //   operator.pov(180).onTrue(m_elevatorToPoint0Position);
 
         //Climber Control
         //operator.x().onTrue(m_elevatorTo0Position);
@@ -179,22 +195,24 @@ public class RobotContainer {
             new PositionJoystickCommand(m_Pivot, driver, kPositionGravityCompensation)
         );
 
-        operator.rightTrigger().onTrue(m_pivotToL2L3);
-        operator.leftTrigger().onTrue(m_pivotTo0);
+       // operator.rightTrigger().onTrue(m_pivotToL2);
+       // operator.leftTrigger().onTrue(m_pivotTo);
         
         // Parallel-Elevator-Pivot sequences
-        /*
+        
         operator.pov(180).onTrue(m_pivotToParallel.andThen(m_elevatorTo0Position).andThen(m_pivotTo0));
-        operator.a().onTrue(m_pivotToParallel.andThen(m_elevatorToL2Position).andThen(m_pivotToL2L3));
-        operator.b().onTrue(m_pivotToParallel.andThen(m_elevatorToL3Position).andThen(m_pivotToL2L3));
+        operator.a().onTrue(m_pivotToParallel.andThen(m_elevatorToL2Position).andThen(m_pivotToL2));
+        operator.b().onTrue(m_pivotToParallel.andThen(m_elevatorToL3Position).andThen(m_pivotToL3));
         operator.y().onTrue(m_pivotToParallel.andThen(m_elevatorToL4Position).andThen(m_pivotToL4));
+        operator.x().onTrue(m_pivotToParallel.andThen(m_elevatorTo0Position).andThen(m_pivotToIN));
 
-        */
+
+        
 
 
         //Shooter Control
-        operator.leftBumper().whileTrue(shooter.shooterIntakeControl());
-        operator.rightBumper().onTrue(shooter.shooterOutakeControl().withTimeout(0.75));
+        operator.leftTrigger().whileTrue(shooter.shooterIntakeControl());
+        operator.rightTrigger().onTrue(shooter.shooterOutakeControl().withTimeout(0.75));
 
 
         drivetrain.registerTelemetry(logger::telemeterize);

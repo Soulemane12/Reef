@@ -79,15 +79,12 @@ private int m_printCount = 0;
       }
     }
 
-    // // Print position every 10 cycles
-    if (++m_printCount >= 10) {
-        m_printCount = 0;
+   
         double position = (m_motor1.getPosition().getValueAsDouble() - INITIAL_OFFSET) * -1;
         double velocity = m_motor1.getVelocity().getValueAsDouble();
 
         System.out.println("Elevator Position: " + position);
-        System.out.println("Elevator Velocity: " + velocity);
-    }
+    
   }
 
   /**
