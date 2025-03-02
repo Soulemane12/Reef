@@ -62,7 +62,7 @@ public class RobotContainer {
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
     private final double kElevatorGravityCompensation = 0.04;
-    private final double kPositionGravityCompensation = -0.45; // Increased from -0.30 to better handle gravity
+    private final double kPositionGravityCompensation = -0.6; // Increased gravity compensation
 
     private final SendableChooser<Command> autoChooser;
 
@@ -112,12 +112,12 @@ public class RobotContainer {
         double PARALLEL = -3; // Parallel to ground is 0 radians
 
         // Compute the adjusted setpoints with stronger gravity compensation
-        double adjustedL2 = L2 + (kPositionGravityCompensation * Math.sin(L2)) + (0.1 * Math.cos(L2));
-        double adjustedL3 = L3 + (kPositionGravityCompensation * Math.sin(L3)) + (0.1 * Math.cos(L3));
-        double adjustedL0 = L0 + (kPositionGravityCompensation * Math.sin(L0)) + (0.1 * Math.cos(L0));
-        double adjustedL4 = L4 + (kPositionGravityCompensation * Math.sin(L4)) + (0.1 * Math.cos(L4));
-        double adjustedParallel = PARALLEL + (kPositionGravityCompensation * Math.sin(PARALLEL)) + (0.1 * Math.cos(PARALLEL));
-        double adjustedin = in + (kPositionGravityCompensation * Math.sin(in)) + (0.1 * Math.cos(in));
+        double adjustedL2 = L2 + (kPositionGravityCompensation * Math.sin(L2)) + (0.15 * Math.cos(L2));
+        double adjustedL3 = L3 + (kPositionGravityCompensation * Math.sin(L3)) + (0.15 * Math.cos(L3));
+        double adjustedL0 = L0 + (kPositionGravityCompensation * Math.sin(L0)) + (0.15 * Math.cos(L0));
+        double adjustedL4 = L4 + (kPositionGravityCompensation * Math.sin(L4)) + (0.15 * Math.cos(L4));
+        double adjustedParallel = PARALLEL + (kPositionGravityCompensation * Math.sin(PARALLEL)) + (0.15 * Math.cos(PARALLEL));
+        double adjustedin = in + (kPositionGravityCompensation * Math.sin(in)) + (0.15 * Math.cos(in));
 
 
         // Now create your pivot commands with the adjusted setpoints

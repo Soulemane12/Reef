@@ -23,19 +23,19 @@ public class Pivot extends SubsystemBase {
         // Configure feedback and gear ratio if needed
         config.Feedback.SensorToMechanismRatio = 3.0; // Adjust based on gear ratio
         
-        // Configure Motion Magic parameters
-        config.MotionMagic.withMotionMagicCruiseVelocity(4.0)  // Reduced for more controlled movement
-                          .withMotionMagicAcceleration(8.0)    // Reduced for more controlled movement
-                          .withMotionMagicJerk(50.0);         // Reduced for smoother motion
+        // Configure Motion Magic parameters - slower but more precise movement
+        config.MotionMagic.withMotionMagicCruiseVelocity(3.0)  // Slower for more precision
+                          .withMotionMagicAcceleration(6.0)    // Slower acceleration
+                          .withMotionMagicJerk(30.0);         // Reduced jerk for smoother stops
 
-        // Configure PID values
-        config.Slot0.kP = 25.0;  // Increased for better position holding
-        config.Slot0.kI = 0.1;   // Added small I term to eliminate steady-state error
-        config.Slot0.kD = 0.2;   // Increased for better damping
-        config.Slot0.kS = 0.3;   // Increased static friction compensation
-        config.Slot0.kV = 1.2;   // Increased velocity feedforward
-        config.Slot0.kA = 0.1;   // Increased acceleration feedforward
-        config.Slot0.kG = 0.15;  // Increased gravity compensation
+        // Configure PID values - more aggressive position holding
+        config.Slot0.kP = 35.0;  // More aggressive position holding
+        config.Slot0.kI = 0.05;  // Reduced I to prevent wind-up
+        config.Slot0.kD = 0.8;   // Increased D for better deceleration
+        config.Slot0.kS = 0.35;  // Slightly increased static friction compensation
+        config.Slot0.kV = 1.5;   // Increased velocity feedforward
+        config.Slot0.kA = 0.15;  // Increased acceleration feedforward
+        config.Slot0.kG = 0.25;  // Increased gravity compensation significantly
 
         // Apply configuration
         m_motor.getConfigurator().apply(config);
@@ -49,9 +49,11 @@ public class Pivot extends SubsystemBase {
      * @param targetPosition The target position in rotations.
      */
     public void setShooterPosition(double targetPosition) {
+        // Add a small offset to compensate for consistent undershoot
+        double adjustedTarget = targetPosition * 1.05; // Scale target by 5% to compensate for undershoot
         m_motor.setNeutralMode(NeutralModeValue.Brake);
-        m_motor.setControl(new MotionMagicVoltage(targetPosition));
-        lastTargetPosition = targetPosition;
+        m_motor.setControl(new MotionMagicVoltage(adjustedTarget));
+        lastTargetPosition = adjustedTarget;
     }
 
     /**
