@@ -20,7 +20,8 @@ public class ElevatorToL4Position extends ElevatorPositionCommandBase {
     @Override
     public void execute() {
         m_elevator.setPositionWithRequest(m_request.withPosition(4.5));
-        
+        /* 
+       
         // Check if we're at position (within tolerance)
         if (Math.abs(m_elevator.getPosition() - 4.5) < 0.1 && !positionReached) {
             positionReached = true;
@@ -32,6 +33,7 @@ public class ElevatorToL4Position extends ElevatorPositionCommandBase {
         if (positionReached && shootTimer.hasElapsed(SHOOT_DURATION)) {
             m_shooter.shoot(0.0);
         }
+            */
     }
 
     @Override
