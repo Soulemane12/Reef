@@ -169,7 +169,9 @@ public class RobotContainer {
         
         joysticksb.leftTrigger().onTrue(m_pivotToL4);
 
-        
+       // joysticks.rightTrigger().onTrue(m_pivotToL2L3.andThen(m_elevatorToL2Position));
+       // joysticks.b().onTrue(m_pivotToL2L3.andThen(m_elevatorToL3Position));
+        //joysticks.leftTrigger().onTrue(m_pivotToL4.andThen(m_elevatorToL4Position));
 
         //Shooter Control
         joysticksb.leftBumper().whileTrue(shooter.shooterIntakeControl());
