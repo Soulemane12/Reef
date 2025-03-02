@@ -61,8 +61,8 @@ private int m_printCount = 0;
 
   // Overloaded method for DynamicMotionMagicVoltage input
   public void setPositionWithRequest(MotionMagicVoltage request) {
-    m_motor1.setNeutralMode(NeutralModeValue.Brake);
-    m_motor2.setNeutralMode(NeutralModeValue.Brake);
+   // m_motor1.setNeutralMode(NeutralModeValue.Brake);
+   // m_motor2.setNeutralMode(NeutralModeValue.Brake);
     m_motor2.setControl(new Follower(m_motor1.getDeviceID(), true));
     m_motor1.setControl(request.withPosition(-request.Position));
   }
@@ -94,8 +94,8 @@ private int m_printCount = 0;
    * @param speed A value between -1.0 and 1.0 representing motor output.
    */
   public void moveElevator(double speed) {
-    m_motor1.setNeutralMode(NeutralModeValue.Brake);
-    m_motor2.setNeutralMode(NeutralModeValue.Brake);
+   // m_motor1.setNeutralMode(NeutralModeValue.Brake);
+   // m_motor2.setNeutralMode(NeutralModeValue.Brake);
     
     m_motor1.setControl(new DutyCycleOut(-speed*0.5));
     m_motor2.setControl(new DutyCycleOut(speed*0.5));

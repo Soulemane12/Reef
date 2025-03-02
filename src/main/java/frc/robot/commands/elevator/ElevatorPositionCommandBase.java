@@ -16,4 +16,12 @@ public abstract class ElevatorPositionCommandBase extends Command {
     public ElevatorPositionCommandBase() {
         addRequirements(m_elevator);
     }
+
+    @Override
+    public boolean isFinished() {
+        // Consider the command finished when we're within 0.1 rotations of the target
+        double targetPosition = m_request.Position;
+        double currentPosition = m_elevator.getPosition();
+        return Math.abs(currentPosition - targetPosition) < 0.1;
+    }
 }

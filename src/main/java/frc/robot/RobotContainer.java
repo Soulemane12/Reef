@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -41,7 +42,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Reduce deadband to 5%
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -84,7 +85,7 @@ public class RobotContainer {
 
 
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("Blue");
+        autoChooser = AutoBuilder.buildAutoChooser("Red");
         
         // Initialize the base command with common dependencies
         ElevatorPositionCommandBase.initialize(m_elevator, m_request);
@@ -97,15 +98,18 @@ public class RobotContainer {
         m_elevatorTo0Position = new ElevatorTo0Position();
         m_elevatorToPoint0Position = new ElevatorToPoint0Position();
 
-            // Define your base setpoints (in radians)
+        // Set elevator to "fake" zero position on robot init
+        m_elevatorToPoint0Position.schedule();
+
+        // Define your base setpoints (in radians)
         double L2 = -1.83;
         double L3 = -1.4; 
-        double in = -1.275; 
+        double in = -2.94; 
 
 
-        double L0 = 0;
-        double L4 = 0.19;
-        double PARALLEL = -2.5; // Parallel to ground is 0 radians
+        double L0 = 0.75;
+        double L4 = -1.5;
+        double PARALLEL = -3; // Parallel to ground is 0 radians
 
         // Compute the adjusted setpoints by adding gravity compensation.
         // kPositionGravityCompensation is assumed to be a constant like -0.30 (adjust as needed).
@@ -157,10 +161,10 @@ public class RobotContainer {
         ));
 
         driver.pov(0).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0.5).withVelocityY(0))
+            forwardStraight.withVelocityX(0.10).withVelocityY(0))
         );
         driver.pov(180).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(-0.5).withVelocityY(0))
+            forwardStraight.withVelocityX(-0.10).withVelocityY(0))
         );
 
         // Run SysId routines when holding back/start and X/Y.
@@ -177,9 +181,9 @@ public class RobotContainer {
                                 .onFalse(new InstantCommand(() -> shooter.shoot(0.0), shooter));
 
         // Elevator default command
-        m_elevator.setDefaultCommand(
-            new ElevatorJoystickCommand(m_elevator, driver, kElevatorGravityCompensation)
-        );
+      //  m_elevator.setDefaultCommand(
+       //     new ElevatorJoystickCommand(m_elevator, driver, kElevatorGravityCompensation)
+       // );
 
         // Elevator position control with buttons
       //  operator.a().onTrue(m_elevatorToL2Position);
@@ -199,12 +203,20 @@ public class RobotContainer {
        // operator.leftTrigger().onTrue(m_pivotTo);
         
         // Parallel-Elevator-Pivot sequences
-        
-        operator.pov(180).onTrue(m_pivotToParallel.andThen(m_elevatorTo0Position).andThen(m_pivotTo0));
-        operator.a().onTrue(m_pivotToParallel.andThen(m_elevatorToL2Position).andThen(m_pivotToL2));
-        operator.b().onTrue(m_pivotToParallel.andThen(m_elevatorToL3Position).andThen(m_pivotToL3));
-        operator.y().onTrue(m_pivotToParallel.andThen(m_elevatorToL4Position).andThen(m_pivotToL4));
-        operator.x().onTrue(m_pivotToParallel.andThen(m_elevatorTo0Position).andThen(m_pivotToIN));
+        operator.pov(180).onTrue(Commands.parallel(m_elevatorTo0Position, m_pivotTo0));
+        operator.pov(0).onTrue(m_pivotToIN);
+
+        operator.a().onTrue(Commands.parallel(m_elevatorToL2Position, m_pivotToL2));
+        operator.b().onTrue(Commands.parallel(m_elevatorToL3Position, m_pivotToL3));
+        operator.y().onTrue(Commands.parallel(m_elevatorToL4Position, m_pivotToL4));
+        operator.x().onTrue(m_pivotToParallel);
+      /*  public Command elevateandpivot() {
+           return  Commands.sequence(
+                m_elevatorToL3Position(),
+                m_pivotToL3()
+            );
+        }*/
+
 
 
         
