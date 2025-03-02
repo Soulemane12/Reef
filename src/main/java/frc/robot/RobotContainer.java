@@ -62,7 +62,7 @@ public class RobotContainer {
 
     private final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
     private final double kElevatorGravityCompensation = 0.04;
-    private final double kPositionGravityCompensation = -0.30; // Adjust this value based on testing
+    private final double kPositionGravityCompensation = -0.45; // Increased from -0.30 to better handle gravity
 
     private final SendableChooser<Command> autoChooser;
 
@@ -111,15 +111,13 @@ public class RobotContainer {
         double L4 = -1.5;
         double PARALLEL = -3; // Parallel to ground is 0 radians
 
-        // Compute the adjusted setpoints by adding gravity compensation.
-        // kPositionGravityCompensation is assumed to be a constant like -0.30 (adjust as needed).
-        double adjustedL2 = L2 + (kPositionGravityCompensation * Math.sin(L2));
-        double adjustedL3 = L3 + (kPositionGravityCompensation * Math.sin(L3));
-
-        double adjustedL0   = L0   + (kPositionGravityCompensation * Math.sin(L0));   // sin(0)==0 so remains 0
-        double adjustedL4   = L4   + (kPositionGravityCompensation * Math.sin(L4));
-        double adjustedParallel = PARALLEL + (kPositionGravityCompensation * Math.sin(PARALLEL));
-        double adjustedin = L3 + (kPositionGravityCompensation * Math.sin(in));
+        // Compute the adjusted setpoints with stronger gravity compensation
+        double adjustedL2 = L2 + (kPositionGravityCompensation * Math.sin(L2)) + (0.1 * Math.cos(L2));
+        double adjustedL3 = L3 + (kPositionGravityCompensation * Math.sin(L3)) + (0.1 * Math.cos(L3));
+        double adjustedL0 = L0 + (kPositionGravityCompensation * Math.sin(L0)) + (0.1 * Math.cos(L0));
+        double adjustedL4 = L4 + (kPositionGravityCompensation * Math.sin(L4)) + (0.1 * Math.cos(L4));
+        double adjustedParallel = PARALLEL + (kPositionGravityCompensation * Math.sin(PARALLEL)) + (0.1 * Math.cos(PARALLEL));
+        double adjustedin = in + (kPositionGravityCompensation * Math.sin(in)) + (0.1 * Math.cos(in));
 
 
         // Now create your pivot commands with the adjusted setpoints
@@ -204,11 +202,27 @@ public class RobotContainer {
         
         // Parallel-Elevator-Pivot sequences
         operator.pov(180).onTrue(Commands.parallel(m_elevatorTo0Position, m_pivotTo0));
-        operator.pov(0).onTrue(m_pivotToIN);
+        operator.pov(0).onTrue(Commands.sequence(
+            m_pivotToIN,
+            Commands.waitSeconds(0.5),
+            m_elevatorTo0Position
+        ));
 
-        operator.a().onTrue(Commands.parallel(m_elevatorToL2Position, m_pivotToL2));
-        operator.b().onTrue(Commands.parallel(m_elevatorToL3Position, m_pivotToL3));
-        operator.y().onTrue(Commands.parallel(m_elevatorToL4Position, m_pivotToL4));
+        operator.a().onTrue(Commands.sequence(
+            m_pivotToL2,
+            Commands.waitSeconds(0.5),
+            m_elevatorToL2Position
+        ));
+        operator.b().onTrue(Commands.sequence(
+            m_pivotToL3,
+            Commands.waitSeconds(0.5),
+            m_elevatorToL3Position
+        ));
+        operator.y().onTrue(Commands.sequence(
+            m_pivotToL4,
+            Commands.waitSeconds(0.5),
+            m_elevatorToL4Position
+        ));
         operator.x().onTrue(m_pivotToParallel);
       /*  public Command elevateandpivot() {
            return  Commands.sequence(

@@ -24,18 +24,18 @@ public class Pivot extends SubsystemBase {
         config.Feedback.SensorToMechanismRatio = 3.0; // Adjust based on gear ratio
         
         // Configure Motion Magic parameters
-        config.MotionMagic.withMotionMagicCruiseVelocity(5.0)  // Adjust for desired speed
-                          .withMotionMagicAcceleration(10.0)    // Adjust acceleration
-                          .withMotionMagicJerk(1000.0);        // Adjust jerk
+        config.MotionMagic.withMotionMagicCruiseVelocity(4.0)  // Reduced for more controlled movement
+                          .withMotionMagicAcceleration(8.0)    // Reduced for more controlled movement
+                          .withMotionMagicJerk(50.0);         // Reduced for smoother motion
 
         // Configure PID values
-        config.Slot0.kP = 20.0;  // Adjust based on tuning
-        config.Slot0.kI = 0.0;   
-        config.Slot0.kD = 0.1;   
-        config.Slot0.kS = 0.2;  
-        config.Slot0.kV = 1.0;   
-        config.Slot0.kA = 0.05;  
-        config.Slot0.kG = 0.1;
+        config.Slot0.kP = 25.0;  // Increased for better position holding
+        config.Slot0.kI = 0.1;   // Added small I term to eliminate steady-state error
+        config.Slot0.kD = 0.2;   // Increased for better damping
+        config.Slot0.kS = 0.3;   // Increased static friction compensation
+        config.Slot0.kV = 1.2;   // Increased velocity feedforward
+        config.Slot0.kA = 0.1;   // Increased acceleration feedforward
+        config.Slot0.kG = 0.15;  // Increased gravity compensation
 
         // Apply configuration
         m_motor.getConfigurator().apply(config);
