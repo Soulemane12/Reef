@@ -48,9 +48,9 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
-    private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController joysticks = new CommandXboxController(1);
-    private final CommandXboxController joysticksb = new CommandXboxController(2);
+    private final CommandXboxController joystick = new CommandXboxController(0); //driver
+    private final CommandXboxController joysticks = new CommandXboxController(1); 
+    private final CommandXboxController joysticksb = new CommandXboxController(2); //operator
 
     
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -176,10 +176,13 @@ public class RobotContainer {
         joysticksb.leftTrigger().onTrue(m_pivotTo0);
         
         joysticksb.leftTrigger().onTrue(m_pivotToL4);
-
-       // joysticks.rightTrigger().onTrue(m_pivotToL2L3.andThen(m_elevatorToL2Position));
-       // joysticks.b().onTrue(m_pivotToL2L3.andThen(m_elevatorToL3Position));
-        //joysticks.leftTrigger().onTrue(m_pivotToL4.andThen(m_elevatorToL4Position));
+        
+        //NEW METHODS FOR TESTING
+        //joysticksb.x().onTrue(m_pivotTo0.andThen(m_elevatorTo0Position));
+        //joysticksb.a().onTrue(m_pivotToL2L3.andThen(m_elevatorToL2Position));
+        //joysticksb.b().onTrue(m_pivotToL2L3.andThen(m_elevatorToL3Position));
+        //joysticksb.y().onTrue(m_pivotToL4.andThen(m_elevatorToL4Position));
+    
 
         //Shooter Control
         joysticksb.leftBumper().whileTrue(shooter.shooterIntakeControl());
