@@ -30,6 +30,7 @@ import frc.robot.commands.elevator.ElevatorToL2Position;
 import frc.robot.commands.elevator.ElevatorToL3Position;
 import frc.robot.commands.elevator.ElevatorToL4Position;
 import frc.robot.commands.elevator.ElevatorTo0Position;
+import frc.robot.commands.elevator.ElevatorToPoint0Position;
 
 import frc.robot.commands.elevator.ElevatorPositionCommandBase;
 
@@ -68,6 +69,7 @@ public class RobotContainer {
     private final ElevatorToL3Position m_elevatorToL3Position;
     private final ElevatorToL4Position m_elevatorToL4Position;
     private final ElevatorTo0Position m_elevatorTo0Position;
+    private final ElevatorToPoint0Position m_elevatorToPoint0Position;
 
 
     private final PivotSetPositionCommand m_pivotToL2L3;
@@ -89,6 +91,7 @@ public class RobotContainer {
         m_elevatorToL3Position = new ElevatorToL3Position();
         m_elevatorToL4Position = new ElevatorToL4Position();
         m_elevatorTo0Position = new ElevatorTo0Position();
+        m_elevatorToPoint0Position = new ElevatorToPoint0Position();
 
             // Define your base setpoints (in radians)
         double L2L3 = -3; 
@@ -162,6 +165,7 @@ public class RobotContainer {
         operator.a().onTrue(m_elevatorToL2Position);
         operator.b().onTrue(m_elevatorToL3Position);
         operator.y().onTrue(m_elevatorToL4Position);
+        operator.pov(180).onTrue(m_elevatorToPoint0Position);
 
         //Climber Control
         operator.x().onTrue(m_elevatorTo0Position);
