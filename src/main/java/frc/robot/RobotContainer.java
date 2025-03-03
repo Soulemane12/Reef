@@ -36,6 +36,7 @@ import frc.robot.commands.elevator.ElevatorToPoint0Position;
 import frc.robot.commands.elevator.ElevatorPositionCommandBase;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.commands.AlignWithAprilTag;
+import frc.robot.Constants;
 
 public class RobotContainer {
 
@@ -114,7 +115,9 @@ public class RobotContainer {
         double PARALLEL = -3; // Parallel to ground is 0 radians
 
         // Compute the adjusted setpoints with stronger gravity compensation
-        double adjustedL2 = L2 + (kPositionGravityCompensation * Math.sin(L2)) + (0.15 * Math.cos(L2));
+        double adjustedL2 = Constants.PivotConstants.kL2Position + 
+            (Constants.PivotConstants.kGravityCompensation * Math.sin(Constants.PivotConstants.kL2Position)) + 
+            (Constants.PivotConstants.kCosineCompensation * Math.cos(Constants.PivotConstants.kL2Position));
         double adjustedL3 = L3 + (kPositionGravityCompensation * Math.sin(L3)) + (0.15 * Math.cos(L3));
         double adjustedL0 = L0 + (kPositionGravityCompensation * Math.sin(L0)) + (0.15 * Math.cos(L0));
         double adjustedL4 = L4 + (kPositionGravityCompensation * Math.sin(L4)) + (0.15 * Math.cos(L4));

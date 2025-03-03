@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.PivotConstants;
 
 public class Pivot extends SubsystemBase {
     private final TalonFX m_motor = new TalonFX(ShooterConstants.kShooterMotorID, "ChooChooTrain");
@@ -87,6 +88,16 @@ public class Pivot extends SubsystemBase {
         double position = getCurrentPosition();
         System.out.println("Shooter Position: " + position);
 
-        SmartDashboard.putNumber("Pivot Position", m_motor.getPosition().getValueAsDouble());
+        // Update SmartDashboard
+        SmartDashboard.putNumber("Pivot/Current Position", position);
+        SmartDashboard.putNumber("Pivot/Target Position", lastTargetPosition);
+        SmartDashboard.putBoolean("Pivot/At Target", Math.abs(position - lastTargetPosition) < PivotConstants.kPositionTolerance);
+        SmartDashboard.putNumber("Pivot/Position Error", lastTargetPosition - position);
+        
+        // Add named positions for reference
+        SmartDashboard.putNumber("Pivot/L0 Position", PivotConstants.kL0Position);
+        SmartDashboard.putNumber("Pivot/L2 Position", PivotConstants.kL2Position);
+        SmartDashboard.putNumber("Pivot/L3 Position", PivotConstants.kL3Position);
+        SmartDashboard.putNumber("Pivot/L4 Position", PivotConstants.kL4Position);
     }
 }
