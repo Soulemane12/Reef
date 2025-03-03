@@ -35,10 +35,6 @@ import frc.robot.commands.elevator.ElevatorToPoint0Position;
 
 import frc.robot.commands.elevator.ElevatorPositionCommandBase;
 import frc.robot.Constants.PivotConstants;
-import frc.robot.commands.CenterOnTagCommand;
-import frc.robot.LimelightHelpers;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.Timer;
 
 public class RobotContainer {
 
@@ -186,7 +182,8 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        
+        driver.rightTrigger().whileTrue(new RunCommand(() -> shooter.shoot(1.0), shooter))
+                                .onFalse(new InstantCommand(() -> shooter.shoot(0.0), shooter));
 
         // Elevator default command
       //  m_elevator.setDefaultCommand(
@@ -234,7 +231,12 @@ public class RobotContainer {
             m_elevatorToL4Position
         ));
         operator.x().onTrue(m_pivotToParallel);
-      
+      /*  public Command elevateandpivot() {
+           return  Commands.sequence(
+                m_elevatorToL3Position(),
+                m_pivotToL3()
+            );
+        }*/
 
 
 
@@ -242,47 +244,14 @@ public class RobotContainer {
 
 
         //Shooter Control
-        operator.leftTrigger().whileTrue(shooter.shooterIntakeControl())
+        operator.leftTrigger().whileTrue(shooter.shooterIntakeControl());
         operator.rightTrigger().onTrue(shooter.shooterOutakeControl().withTimeout(0.75));
 
-        // Add centering command to a button
-        driver.rightBumper().whileTrue(new CenterOnTagCommand(drivetrain));
-
-        // Add a button to toggle the Limelight LED
-        driver.leftTrigger().onTrue(Commands.runOnce(() -> LimelightHelpers.setLEDMode_ForceBlink("")))
-                    .onFalse(Commands.runOnce(() -> LimelightHelpers.setLEDMode_ForceOff("")));
-
-        // Add a button to switch Limelight pipelines
-        driver.rightTrigger().onTrue(Commands.runOnce(() -> {
-            int currentPipeline = (int)LimelightHelpers.getCurrentPipelineIndex("");
-            LimelightHelpers.setPipelineIndex("", (currentPipeline + 1) % 2); // Toggle between pipeline 0 and 1
-        }));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
-    }
-
-    public void updateVisionMeasurements() {
-        if (LimelightHelpers.getTV("")) {
-            // Get the robot's pose from Limelight
-            double[] botpose = LimelightHelpers.getBotPose_wpiBlue("");  // Use _wpiRed for red alliance
-            
-            if (botpose.length >= 6) {  // Make sure we got valid data
-                Pose2d visionPose = new Pose2d(
-                    botpose[0], 
-                    botpose[1],
-                    Rotation2d.fromDegrees(botpose[5])
-                );
-                
-                // Add the vision measurement to the drivetrain
-                drivetrain.addVisionMeasurement(
-                    visionPose,
-                    Timer.getFPGATimestamp() - (botpose[6] / 1000.0)  // Account for latency
-                );
-            }
-        }
     }
 }
