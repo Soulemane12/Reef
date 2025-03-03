@@ -19,6 +19,14 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.LimelightHelpers;
+import edu.wpi.first.networktables.GenericEntry;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -31,6 +39,51 @@ public class Telemetry {
     public Telemetry(double maxSpeed) {
         MaxSpeed = maxSpeed;
         SignalLogger.start();
+
+        // Initialize Vision Tab
+        visionTab = Shuffleboard.getTab("Vision");
+
+        // Add Limelight camera feed
+        limelightFeed = new HttpCamera("Limelight", "http://limelight.local:5800/stream.mjpg");
+        visionTab.add("Limelight", limelightFeed)
+                .withSize(4, 3)
+                .withPosition(0, 0);
+
+        // Initialize PhotonCamera
+        photonCamera = new PhotonCamera("photonCamera"); // Use your camera's name here
+
+        // Add vision data entries
+        targetIDEntry = visionTab.add("Target ID", 0)
+                .withPosition(4, 0)
+                .getEntry();
+
+        targetXEntry = visionTab.add("Target X", 0.0)
+                .withPosition(4, 1)
+                .getEntry();
+
+        targetYEntry = visionTab.add("Target Y", 0.0)
+                .withPosition(4, 2)
+                .getEntry();
+
+        targetAreaEntry = visionTab.add("Target Area", 0.0)
+                .withPosition(5, 0)
+                .getEntry();
+
+        hasTargetEntry = visionTab.add("Has Target", false)
+                .withPosition(5, 1)
+                .getEntry();
+
+        targetSkewEntry = visionTab.add("Target Skew", 0.0)
+                .withPosition(5, 2)
+                .getEntry();
+
+        targetDistanceEntry = visionTab.add("Distance (m)", 0.0)
+                .withPosition(6, 0)
+                .getEntry();
+
+        // Add a widget to show the current pipeline
+        visionTab.addString("Current Pipeline", () -> LimelightHelpers.getCurrentPipelineType(""))
+                .withPosition(6, 1);
     }
 
     /* What to publish over networktables for telemetry */
@@ -81,6 +134,17 @@ public class Telemetry {
     private final double[] m_moduleStatesArray = new double[8];
     private final double[] m_moduleTargetsArray = new double[8];
 
+    private final ShuffleboardTab visionTab;
+    private final HttpCamera limelightFeed;
+    private final PhotonCamera photonCamera;
+    private final GenericEntry targetIDEntry;
+    private final GenericEntry targetXEntry;
+    private final GenericEntry targetYEntry;
+    private final GenericEntry targetAreaEntry;
+    private final GenericEntry hasTargetEntry;
+    private final GenericEntry targetSkewEntry;
+    private final GenericEntry targetDistanceEntry;
+
     /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
     public void telemeterize(SwerveDriveState state) {
         /* Telemeterize the swerve drive state */
@@ -119,6 +183,37 @@ public class Telemetry {
             m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
 
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
+        }
+
+        // Add vision updates
+        updateVisionData();
+    }
+
+    public void updateVisionData() {
+        // Update Limelight data
+        boolean hasTarget = LimelightHelpers.getTV("");
+        hasTargetEntry.setBoolean(hasTarget);
+
+        if (hasTarget) {
+            targetXEntry.setDouble(LimelightHelpers.getTX(""));
+            targetYEntry.setDouble(LimelightHelpers.getTY(""));
+            targetAreaEntry.setDouble(LimelightHelpers.getTA(""));
+            targetIDEntry.setDouble(LimelightHelpers.getFiducialID(""));
+            
+            // Get 3D position data if available
+            double[] botpose = LimelightHelpers.getBotPose_wpiBlue("");
+            if (botpose.length >= 3) {
+                double distance = Math.sqrt(botpose[0] * botpose[0] + botpose[1] * botpose[1]);
+                targetDistanceEntry.setDouble(distance);
+            }
+        }
+
+        // Update PhotonVision data
+        PhotonPipelineResult result = photonCamera.getLatestResult();
+        if (result.hasTargets()) {
+            var target = result.getBestTarget();
+            targetSkewEntry.setDouble(target.getSkew());
+            // Add more PhotonVision specific data as needed
         }
     }
 }
