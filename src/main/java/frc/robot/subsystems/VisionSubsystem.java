@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -38,5 +39,33 @@ public class VisionSubsystem extends SubsystemBase {
         double error = (tx + tagYaw) / 2;
 
         return alignPID.calculate(error, 0.0);
+    }
+
+    /**
+     * Calculate the distance to the target using camera geometry
+     * @return Distance to the target in meters, or -1 if no target is visible
+     */
+    public double getDistanceToTarget() {
+        PhotonPipelineResult result = photonCamera.getLatestResult();
+        if (result.hasTargets()) {
+            return PhotonUtils.calculateDistanceToTargetMeters(
+                CAMERA_HEIGHT_METERS,
+                TARGET_HEIGHT_METERS,
+                CAMERA_PITCH_RADIANS,
+                Math.toRadians(result.getBestTarget().getPitch())
+            );
+        }
+        return -1.0;
+    }
+
+    @Override
+    public void periodic() {
+        // Log vision data to SmartDashboard
+        double distance = getDistanceToTarget();
+        if (distance > 0) {
+            double error = (getLimelightTx() + getAprilTagYaw()) / 2;
+            System.out.printf("Target Distance: %.2fm, Alignment Error: %.2f°%n", 
+                            distance, error);
+        }
     }
 } 
