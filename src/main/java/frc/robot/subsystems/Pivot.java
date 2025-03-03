@@ -6,14 +6,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class Pivot extends SubsystemBase {
-    private final TalonFX m_motor = new TalonFX(PivotConstants.kPivotMotorID, "ChooChooTrain");
-    private final ShuffleboardTab m_pivotTab;
+    private final TalonFX m_motor = new TalonFX(ShooterConstants.kShooterMotorID, "ChooChooTrain");
 
     private double INITIAL_OFFSET = 0;
     private boolean hasInitialized = false;
@@ -44,12 +42,6 @@ public class Pivot extends SubsystemBase {
 
         // Set neutral mode
         m_motor.setNeutralMode(NeutralModeValue.Brake);
-
-        // Create Shuffleboard tab for pivot
-        m_pivotTab = Shuffleboard.getTab("Pivot");
-        m_pivotTab.addDouble("Current Position", this::getCurrentPosition);
-        m_pivotTab.addDouble("Target Position", () -> m_motor.getClosedLoopReference().getValueAsDouble());
-        m_pivotTab.addDouble("Position Error", () -> m_motor.getClosedLoopError().getValueAsDouble());
     }
 
     /**
@@ -96,8 +88,5 @@ public class Pivot extends SubsystemBase {
         System.out.println("Shooter Position: " + position);
 
         SmartDashboard.putNumber("Pivot Position", m_motor.getPosition().getValueAsDouble());
-
-        // This method will be called once per scheduler run
-        // Update Shuffleboard values are automatically handled by the addDouble() methods above
     }
 }
