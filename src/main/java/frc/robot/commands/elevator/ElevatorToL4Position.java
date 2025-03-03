@@ -1,6 +1,7 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Shooter;
 
 public class ElevatorToL4Position extends ElevatorPositionCommandBase {
@@ -19,7 +20,7 @@ public class ElevatorToL4Position extends ElevatorPositionCommandBase {
 
     @Override
     public void execute() {
-        m_elevator.setPositionWithRequest(m_request.withPosition(4.5));
+        m_elevator.setPositionWithRequest(m_request.withPosition(ElevatorConstants.kElevatorL4Position));
         /* 
        
         // Check if we're at position (within tolerance)
@@ -34,6 +35,15 @@ public class ElevatorToL4Position extends ElevatorPositionCommandBase {
             m_shooter.shoot(0.0);
         }
             */
+    }
+
+    @Override
+    public boolean isFinished() {
+        if (Math.abs(m_elevator.getPosition() - ElevatorConstants.kElevatorL4Position) < 0.1 && !positionReached) {
+            positionReached = true;
+            return false;
+        }
+        return false;
     }
 
     @Override

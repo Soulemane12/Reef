@@ -9,6 +9,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class Elevator extends SubsystemBase {
   // Two motors for the elevator drive.
@@ -16,9 +18,11 @@ public class Elevator extends SubsystemBase {
   private final TalonFX m_motor2 = new TalonFX(ElevatorConstants.kElevatorMotorID2, "ChooChooTrain");
   
   // Add Motion Magic control request
-private int m_printCount = 0;
+  private int m_printCount = 0;
   private double INITIAL_OFFSET = 0;
   private boolean hasInitialized = false;
+
+  private final ShuffleboardTab m_elevatorTab;
 
   public Elevator() {
     // Configure both motors
@@ -47,6 +51,12 @@ private int m_printCount = 0;
     
     // Set motor2 to follow motor1 in opposite direction
     m_motor2.setControl(new Follower(m_motor1.getDeviceID(), true));
+
+    // Create Shuffleboard tab for elevator
+    m_elevatorTab = Shuffleboard.getTab("Elevator");
+    m_elevatorTab.addDouble("Current Position", this::getPosition);
+    m_elevatorTab.addDouble("Target Position", () -> m_motor1.getClosedLoopReference().getValueAsDouble());
+    m_elevatorTab.addDouble("Position Error", () -> m_motor1.getClosedLoopError().getValueAsDouble());
   }
 
   /**
@@ -85,6 +95,7 @@ private int m_printCount = 0;
 
         System.out.println("Elevator Position: " + position);
     
+    // Update Shuffleboard values are automatically handled by the addDouble() methods above
   }
 
   /**

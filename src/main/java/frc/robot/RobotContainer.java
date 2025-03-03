@@ -34,6 +34,7 @@ import frc.robot.commands.elevator.ElevatorTo0Position;
 import frc.robot.commands.elevator.ElevatorToPoint0Position;
 
 import frc.robot.commands.elevator.ElevatorPositionCommandBase;
+import frc.robot.Constants.PivotConstants;
 
 public class RobotContainer {
 
@@ -101,24 +102,30 @@ public class RobotContainer {
         // Set elevator to "fake" zero position on robot init
         m_elevatorToPoint0Position.schedule();
 
-        // Define your base setpoints (in radians)
-        double L2 = -1.83;
-        double L3 = -1.4; 
-        double in = -2.94; 
-
-
-        double L0 = 0.75;
-        double L4 = -1.5;
-        double PARALLEL = -3; // Parallel to ground is 0 radians
-
-        // Compute the adjusted setpoints with stronger gravity compensation
-        double adjustedL2 = L2 + (kPositionGravityCompensation * Math.sin(L2)) + (0.15 * Math.cos(L2));
-        double adjustedL3 = L3 + (kPositionGravityCompensation * Math.sin(L3)) + (0.15 * Math.cos(L3));
-        double adjustedL0 = L0 + (kPositionGravityCompensation * Math.sin(L0)) + (0.15 * Math.cos(L0));
-        double adjustedL4 = L4 + (kPositionGravityCompensation * Math.sin(L4)) + (0.15 * Math.cos(L4));
-        double adjustedParallel = PARALLEL + (kPositionGravityCompensation * Math.sin(PARALLEL)) + (0.15 * Math.cos(PARALLEL));
-        double adjustedin = in + (kPositionGravityCompensation * Math.sin(in)) + (0.15 * Math.cos(in));
-
+        // Compute the adjusted setpoints with gravity compensation
+        double adjustedL2 = PivotConstants.kPivotL2Position + 
+            (kPositionGravityCompensation * Math.sin(PivotConstants.kPivotL2Position)) + 
+            (0.15 * Math.cos(PivotConstants.kPivotL2Position));
+        
+        double adjustedL3 = PivotConstants.kPivotL3Position + 
+            (kPositionGravityCompensation * Math.sin(PivotConstants.kPivotL3Position)) + 
+            (0.15 * Math.cos(PivotConstants.kPivotL3Position));
+        
+        double adjustedL0 = PivotConstants.kPivotL0Position + 
+            (kPositionGravityCompensation * Math.sin(PivotConstants.kPivotL0Position)) + 
+            (0.15 * Math.cos(PivotConstants.kPivotL0Position));
+        
+        double adjustedL4 = PivotConstants.kPivotL4Position + 
+            (kPositionGravityCompensation * Math.sin(PivotConstants.kPivotL4Position)) + 
+            (0.15 * Math.cos(PivotConstants.kPivotL4Position));
+        
+        double adjustedParallel = PivotConstants.kPivotParallelPosition + 
+            (kPositionGravityCompensation * Math.sin(PivotConstants.kPivotParallelPosition)) + 
+            (0.15 * Math.cos(PivotConstants.kPivotParallelPosition));
+        
+        double adjustedin = PivotConstants.kPivotInPosition + 
+            (kPositionGravityCompensation * Math.sin(PivotConstants.kPivotInPosition)) + 
+            (0.15 * Math.cos(PivotConstants.kPivotInPosition));
 
         // Now create your pivot commands with the adjusted setpoints
         m_pivotToL2 = new PivotSetPositionCommand(m_Pivot, m_request, adjustedL2);
