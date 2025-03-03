@@ -28,12 +28,6 @@ public final class Constants {
     public static final double kGravityCompensation = 0.04;
     public static final double kPositionTolerance = 0.1;
   }
-  public static class ShooterConstants{
-    public static final int kShooterMotorID = 30;
-
-    
-    
-  }
 
   public static class PivotConstants {
     public static final int kPivotMotorID = 30;

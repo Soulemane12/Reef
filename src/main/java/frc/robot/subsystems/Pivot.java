@@ -5,14 +5,12 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.PivotConstants;
 
 public class Pivot extends SubsystemBase {
-    private final TalonFX m_motor = new TalonFX(ShooterConstants.kShooterMotorID, "ChooChooTrain");
+    private final TalonFX m_motor = new TalonFX(PivotConstants.kPivotMotorID, "ChooChooTrain");
 
     private double INITIAL_OFFSET = 0;
     private boolean hasInitialized = false;
