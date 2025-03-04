@@ -9,7 +9,6 @@ public class AlignWithAprilTag extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final VisionSubsystem visionSubsystem;
     private final SwerveRequest.RobotCentric turnRequest;
-    private final double ALIGNMENT_TOLERANCE = 1.0; // degrees
 
     public AlignWithAprilTag(CommandSwerveDrivetrain drive, VisionSubsystem vision) {
         this.drivetrain = drive;
@@ -20,21 +19,15 @@ public class AlignWithAprilTag extends Command {
 
     @Override
     public void execute() {
-        if (visionSubsystem.hasValidTarget()) {
-            double alignmentSpeed = visionSubsystem.calculateAlignmentSpeed();
-            drivetrain.setControl(turnRequest.withRotationalRate(alignmentSpeed));
-        } else {
-            drivetrain.setControl(turnRequest.withRotationalRate(0));
-        }
+        double alignmentSpeed = visionSubsystem.calculateAlignmentSpeed();
+        drivetrain.setControl(turnRequest.withRotationalRate(alignmentSpeed));
     }
 
     @Override
     public boolean isFinished() {
-        if (!visionSubsystem.hasValidTarget()) {
-             return false;
-        }
-        return Math.abs(visionSubsystem.getTargetYaw()) < ALIGNMENT_TOLERANCE;
-    }
+        double error = visionSubsystem.getLimelightTx() + visionSubsystem.getAprilTagYaw();
+        return Math.abs(error) < 1.0;}
+
 
     @Override
     public void end(boolean interrupted) {

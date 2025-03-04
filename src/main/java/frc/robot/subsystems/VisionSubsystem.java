@@ -10,14 +10,14 @@ import org.photonvision.targeting.PhotonPipelineResult;
 public class VisionSubsystem extends SubsystemBase {
     private final PhotonCamera photonCamera;
     private final PIDController alignPID;
-    private final double CAMERA_HEIGHT_METERS = 0.1524; // Adjust based on your robot
-    private final double TARGET_HEIGHT_METERS = 1.397; // Adjust based on AprilTag height
-    private final double CAMERA_PITCH_RADIANS = Math.toRadians(50); // Adjust based on your camera
+    private final double CAMERA_HEIGHT_METERS = 0.6; // Adjust based on your robot
+    private final double TARGET_HEIGHT_METERS = 1.0; // Adjust based on AprilTag height
+    private final double CAMERA_PITCH_RADIANS = Math.toRadians(30); // Adjust based on your camera
     private final double ALIGN_TOLERANCE = 1.0;
 
     public VisionSubsystem() {
         photonCamera = new PhotonCamera("Limelight");
-        alignPID = new PIDController(0.02, 0.0, 0.0); // You'll need to tune these values
+        alignPID = new PIDController(0.15, 0.0, 0.05); // You'll need to tune these values
         alignPID.setTolerance(ALIGN_TOLERANCE);
     }
 
@@ -62,27 +62,6 @@ public class VisionSubsystem extends SubsystemBase {
             );
         }
         return -1.0;
-    }
-
-    /**
-     * Check if there is a valid target visible to the vision system
-     * @return true if a target is visible, false otherwise
-     */
-    public boolean hasValidTarget() {
-        PhotonPipelineResult result = photonCamera.getLatestResult();
-        return result.hasTargets();
-    }
-
-    /**
-     * Get the yaw angle to the target
-     * @return the yaw angle in degrees, or 0 if no target is visible
-     */
-    public double getTargetYaw() {
-        PhotonPipelineResult result = photonCamera.getLatestResult();
-        if (result.hasTargets()) {
-            return result.getBestTarget().getYaw();
-        }
-        return 0.0;
     }
 
     @Override
