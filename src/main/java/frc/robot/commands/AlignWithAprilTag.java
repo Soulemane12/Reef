@@ -24,7 +24,6 @@ public class AlignWithAprilTag extends Command {
             double alignmentSpeed = visionSubsystem.calculateAlignmentSpeed();
             drivetrain.setControl(turnRequest.withRotationalRate(alignmentSpeed));
         } else {
-            // If no target is visible, stop rotation
             drivetrain.setControl(turnRequest.withRotationalRate(0));
         }
     }
