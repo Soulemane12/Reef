@@ -8,7 +8,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends SubsystemBase {
   // Two motors for the elevator drive.
@@ -16,7 +18,6 @@ public class Elevator extends SubsystemBase {
   private final TalonFX m_motor2 = new TalonFX(ElevatorConstants.kElevatorMotorID2, "ChooChooTrain");
   
   // Add Motion Magic control request
-private int m_printCount = 0;
   private double INITIAL_OFFSET = 0;
   private boolean hasInitialized = false;
 
@@ -79,12 +80,19 @@ private int m_printCount = 0;
       }
     }
 
-   
-        double position = (m_motor1.getPosition().getValueAsDouble() - INITIAL_OFFSET) * -1;
-        double velocity = m_motor1.getVelocity().getValueAsDouble();
-
-        System.out.println("Elevator Position: " + position);
+    // Get current position
+    double position = getPosition();
     
+    // Update SmartDashboard
+    SmartDashboard.putNumber("Elevator/Current Position", position);
+    SmartDashboard.putBoolean("Elevator/Initialized", hasInitialized);
+    SmartDashboard.putNumber("Elevator/Initial Offset", INITIAL_OFFSET);
+    
+    // Add named positions for reference
+    SmartDashboard.putNumber("Elevator/L0 Position", Constants.ElevatorConstants.kL0Position);
+    SmartDashboard.putNumber("Elevator/L2 Position", Constants.ElevatorConstants.kL2Position);
+    SmartDashboard.putNumber("Elevator/L3 Position", Constants.ElevatorConstants.kL3Position);
+    SmartDashboard.putNumber("Elevator/L4 Position", Constants.ElevatorConstants.kL4Position);
   }
 
   /**
@@ -94,8 +102,8 @@ private int m_printCount = 0;
    * @param speed A value between -1.0 and 1.0 representing motor output.
    */
   public void moveElevator(double speed) {
-   // m_motor1.setNeutralMode(NeutralModeValue.Brake);
-   // m_motor2.setNeutralMode(NeutralModeValue.Brake);
+    m_motor1.setNeutralMode(NeutralModeValue.Brake);
+    m_motor2.setNeutralMode(NeutralModeValue.Brake);
     
     m_motor1.setControl(new DutyCycleOut(-speed*0.5));
     m_motor2.setControl(new DutyCycleOut(speed*0.5));

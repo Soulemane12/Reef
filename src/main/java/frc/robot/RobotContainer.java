@@ -34,6 +34,9 @@ import frc.robot.commands.elevator.ElevatorTo0Position;
 import frc.robot.commands.elevator.ElevatorToPoint0Position;
 
 import frc.robot.commands.elevator.ElevatorPositionCommandBase;
+import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.commands.AlignWithAprilTag;
+import frc.robot.Constants;
 
 public class RobotContainer {
 
@@ -81,8 +84,8 @@ public class RobotContainer {
     private final PivotSetPositionCommand m_pivotToParallel;
     private final PivotSetPositionCommand m_pivotToIN;
 
-
-
+    private final VisionSubsystem m_vision = new VisionSubsystem();
+    private final AlignWithAprilTag m_alignCommand;
 
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser("Red");
@@ -112,7 +115,9 @@ public class RobotContainer {
         double PARALLEL = -3; // Parallel to ground is 0 radians
 
         // Compute the adjusted setpoints with stronger gravity compensation
-        double adjustedL2 = L2 + (kPositionGravityCompensation * Math.sin(L2)) + (0.15 * Math.cos(L2));
+        double adjustedL2 = Constants.PivotConstants.kL2Position + 
+            (Constants.PivotConstants.kGravityCompensation * Math.sin(Constants.PivotConstants.kL2Position)) + 
+            (Constants.PivotConstants.kCosineCompensation * Math.cos(Constants.PivotConstants.kL2Position));
         double adjustedL3 = L3 + (kPositionGravityCompensation * Math.sin(L3)) + (0.15 * Math.cos(L3));
         double adjustedL0 = L0 + (kPositionGravityCompensation * Math.sin(L0)) + (0.15 * Math.cos(L0));
         double adjustedL4 = L4 + (kPositionGravityCompensation * Math.sin(L4)) + (0.15 * Math.cos(L4));
@@ -137,6 +142,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("L2Position", m_elevatorToL2Position);
         NamedCommands.registerCommand("L3Position", m_elevatorToL3Position);
         NamedCommands.registerCommand("L4Position", m_elevatorToL4Position);
+        
+        m_alignCommand = new AlignWithAprilTag(drivetrain, m_vision);
         
         configureBindings();
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -237,6 +244,8 @@ public class RobotContainer {
         operator.leftTrigger().whileTrue(shooter.shooterIntakeControl());
         operator.rightTrigger().onTrue(shooter.shooterOutakeControl().withTimeout(0.75));
 
+        // Add AprilTag alignment to a button (for example, driver's X button)
+        driver.x().whileTrue(m_alignCommand);
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
