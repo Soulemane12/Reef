@@ -42,7 +42,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Reduce deadband to 5%
+            .withDeadband(MaxSpeed * 0.10).withRotationalDeadband(MaxAngularRate * 0.10) // Reduce deadband to 5%
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -201,12 +201,14 @@ public class RobotContainer {
        // operator.leftTrigger().onTrue(m_pivotTo);
         
         // Parallel-Elevator-Pivot sequences
-        operator.pov(180).onTrue(Commands.parallel(m_elevatorTo0Position, m_pivotTo0));
+       // operator.pov(180).onTrue(Commands.parallel(m_elevatorTo0Position, m_pivotTo0));
         operator.pov(0).onTrue(Commands.sequence(
             m_pivotToIN,
             Commands.waitSeconds(0.5),
             m_elevatorTo0Position
         ));
+
+        /* */
 
         operator.a().onTrue(Commands.sequence(
             m_pivotToL2,
@@ -224,12 +226,7 @@ public class RobotContainer {
             m_elevatorToL4Position
         ));
         operator.x().onTrue(m_pivotToParallel);
-      /*  public Command elevateandpivot() {
-           return  Commands.sequence(
-                m_elevatorToL3Position(),
-                m_pivotToL3()
-            );
-        }*/
+
 
 
 
