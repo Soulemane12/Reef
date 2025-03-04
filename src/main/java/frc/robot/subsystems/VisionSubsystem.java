@@ -64,6 +64,27 @@ public class VisionSubsystem extends SubsystemBase {
         return -1.0;
     }
 
+    /**
+     * Check if there is a valid target visible to the vision system
+     * @return true if a target is visible, false otherwise
+     */
+    public boolean hasValidTarget() {
+        PhotonPipelineResult result = photonCamera.getLatestResult();
+        return result.hasTargets();
+    }
+
+    /**
+     * Get the yaw angle to the target
+     * @return the yaw angle in degrees, or 0 if no target is visible
+     */
+    public double getTargetYaw() {
+        PhotonPipelineResult result = photonCamera.getLatestResult();
+        if (result.hasTargets()) {
+            return result.getBestTarget().getYaw();
+        }
+        return 0.0;
+    }
+
     @Override
     public void periodic() {
         // Log vision data to SmartDashboard
