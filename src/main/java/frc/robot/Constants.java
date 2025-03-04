@@ -43,4 +43,28 @@ public final class Constants {
     public static final double kPositionTolerance = 0.05;
     public static final double kCosineCompensation = 0.15;
   }
+
+  public static class VisionConstants {
+    // Camera and Target Physical Properties
+    public static final double kCameraHeightMeters = 0.6;  // Height of camera from ground
+    public static final double kTargetHeightMeters = 1.0;  // Height of AprilTag from ground
+    public static final double kCameraPitchDegrees = 30.0; // Camera angle from horizontal
+    public static final double kCameraPitchRadians = Math.toRadians(kCameraPitchDegrees);
+
+    // PID Controller Constants
+    public static final double kAlignP = 0.15;  // Increased from 0.02 for faster response
+    public static final double kAlignI = 0.0;   // Keep at 0 since we don't need steady-state correction
+    public static final double kAlignD = 0.05;  // Added derivative term to help with overshoot
+    public static final double kDistanceP = 0.5; // Proportional gain for distance
+    public static final double kDistanceI = 0.0; // Integral gain for distance
+    public static final double kDistanceD = 0.0; // Derivative gain for distance
+
+    // Tolerances
+    public static final double kAlignToleranceDegrees = 1.0;  // How close to center we need to be
+    public static final double kDistanceToleranceMeters = 0.1; // How close to desired distance we need to be
+    public static final double kDesiredDistanceMeters = 1.0;   // How far we want to be from target
+
+    // Camera Name
+    public static final String kLimelightName = "limelight";
+  }
 }
