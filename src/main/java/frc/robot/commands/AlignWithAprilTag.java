@@ -25,8 +25,9 @@ public class AlignWithAprilTag extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(visionSubsystem.getLimelightTx() + visionSubsystem.getAprilTagYaw()) < 1.0;
-    }
+        double error = visionSubsystem.getLimelightTx() + visionSubsystem.getAprilTagYaw();
+        return Math.abs(error) < 1.0;}
+
 
     @Override
     public void end(boolean interrupted) {

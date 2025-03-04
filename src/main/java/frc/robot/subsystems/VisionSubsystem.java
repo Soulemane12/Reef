@@ -34,12 +34,18 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public double calculateAlignmentSpeed() {
-        double tx = getLimelightTx();
-        double tagYaw = getAprilTagYaw();
-        double error = (tx + tagYaw) / 2;
-
+        PhotonPipelineResult result = photonCamera.getLatestResult();
+        double error;
+        if (result.hasTargets()) {
+            // Use AprilTag yaw if available
+            error = result.getBestTarget().getYaw();
+        } else {
+            // Otherwise use limelight tx
+            error = getLimelightTx();
+        }
         return alignPID.calculate(error, 0.0);
     }
+    
 
     /**
      * Calculate the distance to the target using camera geometry
