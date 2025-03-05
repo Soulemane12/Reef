@@ -6,23 +6,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
+import frc.robot.Constants.VisionConstants;
 
 public class VisionSubsystem extends SubsystemBase {
     private final PhotonCamera photonCamera;
     private final PIDController alignPID;
-    private final double CAMERA_HEIGHT_METERS = 0.6; // Adjust based on your robot
-    private final double TARGET_HEIGHT_METERS = 1.0; // Adjust based on AprilTag height
-    private final double CAMERA_PITCH_RADIANS = Math.toRadians(30); // Adjust based on your camera
-    private final double ALIGN_TOLERANCE = 1.0;
 
     public VisionSubsystem() {
-        photonCamera = new PhotonCamera("Limelight");
-        alignPID = new PIDController(0.15, 0.0, 0.05); // You'll need to tune these values
-        alignPID.setTolerance(ALIGN_TOLERANCE);
+        photonCamera = new PhotonCamera(VisionConstants.kLimelightName);
+        alignPID = new PIDController(
+            VisionConstants.kAlignP,
+            VisionConstants.kAlignI,
+            VisionConstants.kAlignD
+        );
+        alignPID.setTolerance(VisionConstants.kAlignToleranceDegrees);
     }
 
     public double getLimelightTx() {
-        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
+        return NetworkTableInstance.getDefault().getTable(VisionConstants.kLimelightName).getEntry("tx").getDouble(0.0);
     }
 
     public double getAprilTagYaw() {
@@ -55,9 +56,9 @@ public class VisionSubsystem extends SubsystemBase {
         PhotonPipelineResult result = photonCamera.getLatestResult();
         if (result.hasTargets()) {
             return PhotonUtils.calculateDistanceToTargetMeters(
-                CAMERA_HEIGHT_METERS,
-                TARGET_HEIGHT_METERS,
-                CAMERA_PITCH_RADIANS,
+                VisionConstants.kCameraHeightMeters,
+                VisionConstants.kTargetHeightMeters,
+                VisionConstants.kCameraPitchRadians,
                 Math.toRadians(result.getBestTarget().getPitch())
             );
         }
