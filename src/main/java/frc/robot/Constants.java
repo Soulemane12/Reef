@@ -45,12 +45,10 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-
-    
     // Camera and Target Physical Properties
-    public static final double kCameraHeightMeters = 0.15;  // Height of camera from ground
-    public static final double kTargetHeightMeters = 1.4;  // Height of AprilTag from ground
-    public static final double kCameraPitchDegrees = 70.0; // Camera angle from horizontal
+    public static final double kCameraHeightMeters = 0.6;  // Height of camera from ground
+    public static final double kTargetHeightMeters = 1.0;  // Height of AprilTag from ground
+    public static final double kCameraPitchDegrees = 30.0; // Camera angle from horizontal
     public static final double kCameraPitchRadians = Math.toRadians(kCameraPitchDegrees);
 
     // PID Controller Constants - Optimized for faster response
@@ -69,5 +67,4 @@ public final class Constants {
     // Camera Name
     public static final String kLimelightName = "limelight";
   }
-  
 }
